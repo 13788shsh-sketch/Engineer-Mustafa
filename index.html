@@ -42,7 +42,7 @@ table{width:100%;border-collapse:collapse;min-width:500px}th,td{padding:12px;bor
 (function(){
 "use strict";
 var users={mh:"2002",mm:"1010",mp:"2020",nn:"5050"};
-var data={customers:JSON.parse(localStorage.getItem("bm_customers")||"[]"),service:JSON.parse(localStorage.getItem("bm_service")||"[]"),sales:JSON.parse(localStorage.getItem("bm_sales")||"[]"),employees:JSON.parse(localStorage.getItem("bm_employees")||"[]")};
+function getData(k){try{var v=JSON.parse(localStorage.getItem(k)||"[]");return Array.isArray(v)?v:[]}catch(e){localStorage.removeItem(k);return []}}\nvar data={customers:getData("bm_customers"),service:getData("bm_service"),sales:getData("bm_sales"),employees:getData("bm_employees")};
 function save(){localStorage.setItem("bm_customers",JSON.stringify(data.customers));localStorage.setItem("bm_service",JSON.stringify(data.service));localStorage.setItem("bm_sales",JSON.stringify(data.sales));localStorage.setItem("bm_employees",JSON.stringify(data.employees))}
 function esc(v){return String(v||"").replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",""":"&quot;","'":"&#39;"}[c]})}
 function render(){

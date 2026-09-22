@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>نظام إدارة الأعمال</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Tahoma,sans-serif;background:#f3f6fb;color:#172033}
+.login{min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#111827,#2563eb);padding:20px}
+.box{width:min(420px,100%);background:#fff;padding:32px;border-radius:24px;box-shadow:0 20px 60px #0004}
+.logo{width:58px;height:58px;background:#2563eb;color:#fff;border-radius:16px;display:grid;place-items:center;font-size:28px;font-weight:bold}
+h1{margin:16px 0 8px}.muted{color:#64748b}.field{margin:15px 0}.field label{display:block;font-weight:bold;margin-bottom:7px}.field input,.field select{width:100%;padding:12px;border:1px solid #d8dee8;border-radius:11px}
+button{border:0;border-radius:11px;padding:11px 16px;cursor:pointer}.primary{background:#2563eb;color:#fff;font-weight:bold}.secondary{background:#fff;border:1px solid #d8dee8}.error{display:none;color:#dc2626;margin-top:10px}
+.app{display:none;min-height:100vh}.side{position:fixed;right:0;top:0;bottom:0;width:240px;background:#111827;color:#fff;padding:20px;z-index:3}.brand{font-size:20px;font-weight:bold;margin-bottom:22px}.nav button{display:block;width:100%;text-align:right;background:transparent;color:#cbd5e1;margin:4px 0}.nav button:hover,.nav .active{background:#2563eb;color:#fff}.logout{position:absolute;bottom:20px;right:20px;left:20px}
+.main{margin-right:240px;padding:25px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.section{display:none}.section.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card,.panel{background:#fff;border:1px solid #e5e7eb;border-radius:17px;padding:20px}.num{font-size:27px;font-weight:bold;margin-top:8px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.panel h3{margin-top:0}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px;border-bottom:1px solid #edf0f4;text-align:right}.wrap{overflow:auto}.modal{display:none;position:fixed;inset:0;background:#0007;place-items:center;padding:20px;z-index:10}.modal.show{display:grid}.modalbox{background:#fff;border-radius:18px;padding:22px;width:min(500px,100%)}.badge{padding:5px 9px;border-radius:99px;background:#dbeafe;color:#1d4ed8;font-size:12px}
+@media(max-width:800px){.side{width:72px;padding:12px 8px}.brand{font-size:0}.nav button{font-size:0;text-align:center}.nav button:first-letter{font-size:20px}.main{margin-right:72px;padding:15px}.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
+@media(max-width:500px){.cards{grid-template-columns:1fr}.top{display:block}.top button{margin-top:10px}}
+</style>
+</head>
+<body>
+
+<div class="login" id="loginPage">
+<div class="box">
+<div class="logo">أ</div>
+<h1>نظام إدارة الأعمال</h1>
+<p class="muted">تسجيل الدخول إلى لوحة الإدارة</p>
+<div class="field"><label>اسم المستخدم</label><input id="user" autocomplete="username"></div>
+<div class="field"><label>رمز الدخول</label><input id="pass" type="password" autocomplete="current-password"></div>
+<button class="primary" style="width:100%" onclick="login()">دخول</button>
+<div class="error" id="error">اسم المستخدم أو الرمز غير صحيح.</div>
+</div>
+</div>
+
+<div class="app" id="app">
+<aside class="side">
+<div class="brand">🏢 إدارة الأعمال</div>
+<div class="nav">
+<button class="active" onclick="show('dashboard',this)">📊 لوحة التحكم</button>
+<button onclick="show('customers',this)">👥 العملاء</button>
+<button onclick="show('service',this)">📞 خدمة العملاء</button>
+<button onclick="show('sales',this)">💰 المبيعات</button>
+<button onclick="show('employees',this)">👨‍💼 الموظفون</button>
+<button onclick="show('reports',this)">📈 التقارير</button>
+</div>
+<button class="secondary logout" onclick="logout()">تسجيل الخروج</button>
+</aside>
+
+<main class="main">
+<div class="top"><div><h2 id="title">لوحة التحكم</h2><span class="muted" id="welcome"></span></div><button class="primary" onclick="addCustomer()">+ عميل جديد</button></div>
+
+<section class="section active" id="dashboard">
+<div class="cards">
+<div class="card">👥<div class="muted">العملاء</div><div class="num" id="c1">0</div></div>
+<div class="card">📞<div class="muted">طلبات الخدمة</div><div class="num" id="c2">0</div></div>
+<div class="card">💰<div class="muted">المبيعات</div><div class="num" id="c3">0</div></div>
+<div class="card">👨‍💼<div class="muted">الموظفون</div><div class="num" id="c4">0</div></div>
+</div>
+<div class="grid"><div class="panel"><h3>آخر العملاء</h3><div id="recent"></div></div><div class="panel"><h3>آخر الطلبات</h3><div id="recentReq"></div></div></div>
+</section>
+
+<section class="section" id="customers"><div class="panel"><h3>إدارة العملاء</h3><button class="primary" onclick="addCustomer()">+ إضافة عميل</button><div class="wrap"><table class="table"><thead><tr><th>الاسم</th><th>الهاتف</th><th>الشركة</th></tr></thead><tbody id="customerRows"></tbody></table></div></div></section>
+
+<section class="section" id="service"><div class="panel"><h3>خدمة العملاء</h3><button class="primary" onclick="addRequest()">+ طلب جديد</button><div class="wrap"><table class="table"><thead><tr><th>العميل</th><th>الموضوع</th><th>الحالة</th></tr></thead><tbody id="requestRows"></tbody></table></div></div></section>
+
+<section class="section" id="sales"><div class="panel"><h3>المبيعات</h3><button class="primary" onclick="addSale()">+ عملية بيع</button><div class="wrap"><table class="table"><thead><tr><th>العميل</th><th>الخدمة</th><th>المبلغ</th></tr></thead><tbody id="saleRows"></tbody></table></div></div></section>
+
+<section class="section" id="employees"><div class="panel"><h3>الموظفون</h3><button class="primary" onclick="addEmployee()">+ موظف</button><div class="wrap"><table class="table"><thead><tr><th>الاسم</th><th>القسم</th><th>الوظيفة</th></tr></thead><tbody id="employeeRows"></tbody></table></div></div></section>
+
+<section class="section" id="reports"><div class="cards"><div class="card">📊<div class="muted">إجمالي المبيعات</div><div class="num" id="r1">0</div></div><div class="card">📞<div class="muted">طلبات الخدمة</div><div class="num" id="r2">0</div></div></div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modalbox" id="modalbox"></div></div>
+
+<script>
+const users={
+ mh:"2002",
+ mm:"1010",
+ mp:"2020",
+ nn:"5050"
+};
+let currentUser="";
+let data=JSON.parse(localStorage.getItem("businessData")||"null")||{
+customers:[],requests:[],sales:[],employees:[]
+};
+function save(){localStorage.setItem("businessData",JSON.stringify(data));render();}
+function login(){
+ const u=document.getElementById("user").value.trim(),p=document.getElementById("pass").value;
+ if(users[u]===p){
+  currentUser=u;document.getElementById("loginPage").style.display="none";document.getElementById("app").style.display="block";
+  document.getElementById("welcome").textContent="مرحبًا، "+u;render();
+ }else document.getElementById("error").style.display="block";
+}
+function logout(){document.getElementById("app").style.display="none";document.getElementById("loginPage").style.display="grid";document.getElementById("pass").value="";}
+function show(id,btn){document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");let n={dashboard:"لوحة التحكم",customers:"العملاء",service:"خدمة العملاء",sales:"المبيعات",employees:"الموظفون",reports:"التقارير"};document.getElementById("title").textContent=n[id];}
+function render(){
+ c1.textContent=data.customers.length;c2.textContent=data.requests.length;c3.textContent=data.sales.reduce((a,x)=>a+Number(x.amount||0),0).toLocaleString()+" د.ع";c4.textContent=data.employees.length;
+ customerRows.innerHTML=data.customers.map(x=>`<tr><td>${x.name}</td><td>${x.phone}</td><td>${x.company}</td></tr>`).join("")||"<tr><td colspan=3>لا توجد بيانات</td></tr>";
+ requestRows.innerHTML=data.requests.map(x=>`<tr><td>${x.customer}</td><td>${x.subject}</td><td><span class=badge>${x.status}</span></td></tr>`).join("")||"<tr><td colspan=3>لا توجد بيانات</td></tr>";
+ saleRows.innerHTML=data.sales.map(x=>`<tr><td>${x.customer}</td><td>${x.service}</td><td>${Number(x.amount||0).toLocaleString()} د.ع</td></tr>`).join("")||"<tr><td colspan=3>لا توجد بيانات</td></tr>";
+ employeeRows.innerHTML=data.employees.map(x=>`<tr><td>${x.name}</td><td>${x.department}</td><td>${x.job}</td></tr>`).join("")||"<tr><td colspan=3>لا توجد بيانات</td></tr>";
+ recent.innerHTML=data.customers.slice(-4).reverse().map(x=>`<p><b>${x.name}</b> — ${x.company}</p>`).join("")||"لا توجد بيانات";
+ recentReq.innerHTML=data.requests.slice(-4).reverse().map(x=>`<p><b>${x.subject}</b> — ${x.status}</p>`).join("")||"لا توجد بيانات";
+ r1.textContent=c3.textContent;r2.textContent=data.requests.length;
+}
+function openModal(html){document.getElementById("modalbox").innerHTML=html;document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function addCustomer(){openModal(`<h3>إضافة عميل</h3><div class=field><label>الاسم</label><input id=m1></div><div class=field><label>الهاتف</label><input id=m2></div><div class=field><label>الشركة</label><input id=m3></div><button class=primary onclick=saveCustomer()>حفظ</button> <button class=secondary onclick=closeModal()>إلغاء</button>`)}
+function saveCustomer(){data.customers.push({name:m1.value,phone:m2.value,company:m3.value});closeModal();save()}
+function addRequest(){openModal(`<h3>طلب خدمة</h3><div class=field><label>العميل</label><input id=q1></div><div class=field><label>الموضوع</label><input id=q2></div><button class=primary onclick=saveRequest()>حفظ</button> <button class=secondary onclick=closeModal()>إلغاء</button>`)}
+function saveRequest(){data.requests.push({customer:q1.value,subject:q2.value,status:"جديد"});closeModal();save()}
+function addSale(){openModal(`<h3>عملية بيع</h3><div class=field><label>العميل</label><input id=s1></div><div class=field><label>الخدمة</label><input id=s2></div><div class=field><label>المبلغ</label><input id=s3 type=number></div><button class=primary onclick=saveSale()>حفظ</button> <button class=secondary onclick=closeModal()>إلغاء</button>`)}
+function saveSale(){data.sales.push({customer:s1.value,service:s2.value,amount:s3.value});closeModal();save()}
+function addEmployee(){openModal(`<h3>إضافة موظف</h3><div class=field><label>الاسم</label><input id=e1></div><div class=field><label>القسم</label><input id=e2></div><div class=field><label>الوظيفة</label><input id=e3></div><button class=primary onclick=saveEmployee()>حفظ</button> <button class=secondary onclick=closeModal()>إلغاء</button>`)}
+function saveEmployee(){data.employees.push({name:e1.value,department:e2.value,job:e3.value});closeModal();save()}
+</script>
+</body>
+</html>

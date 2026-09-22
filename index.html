@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#1976d2">
+<title>My Android Phone</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#202124;min-height:100vh;display:flex;justify-content:center;align-items:center}
+.phone{width:390px;height:780px;background:#111;border-radius:45px;padding:10px;box-shadow:0 0 40px #000}
+.screen{height:100%;border-radius:37px;overflow:hidden;position:relative;color:#fff;background:linear-gradient(180deg,#1976d2,#673ab7)}
+.status{height:55px;display:flex;justify-content:space-between;align-items:center;padding:0 22px;font-size:14px}
+.content,.page{padding:20px;text-align:center}
+.content h1{font-size:30px;margin:20px 0 25px}
+.apps{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.app{height:100px;border:0;border-radius:24px;background:#ffffff2e;color:#fff;font-size:16px;cursor:pointer}
+.app:hover{background:#ffffff50}
+.icon{display:block;font-size:38px;margin-bottom:8px}
+.page{display:none;height:660px;overflow:auto}
+.page h2{font-size:27px;margin-bottom:20px}
+.back{border:0;background:#fff;color:#222;padding:12px 24px;border-radius:20px;cursor:pointer;margin-top:20px}
+.play-header{background:#fff;color:#333;padding:15px;border-radius:20px;margin-bottom:12px}
+.play-logo{font-size:23px;font-weight:bold;color:#34a853;margin-bottom:12px}
+.search{width:100%;border:0;outline:0;background:#f1f3f4;padding:14px;border-radius:25px;font-size:15px}
+.store{display:flex;flex-direction:column;gap:10px}
+.store-item{background:#fff;color:#222;border-radius:18px;padding:12px;display:flex;align-items:center;gap:10px;text-align:right}
+.store-icon{width:52px;height:52px;border-radius:14px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.store-info{flex:1}.store-info strong{display:block;font-size:16px;margin-bottom:4px}.store-info small{color:#777}
+.download{border:0;background:#1a73e8;color:#fff;padding:9px 12px;border-radius:18px;cursor:pointer;font-weight:bold}
+.home-button{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:120px;height:5px;background:#fff;border:0;border-radius:10px;cursor:pointer}
+.note{background:#ffffff20;padding:12px;border-radius:15px;margin-top:12px;font-size:13px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="phone"><div class="screen">
+<div class="status"><span id="time">00:00</span><span>📶 Wi‑Fi 🔋</span></div>
+
+<div class="content" id="home">
+<h1>My Android</h1>
+<div class="apps">
+<button class="app" onclick="openPage('phonePage')"><span class="icon">📞</span>الهاتف</button>
+<button class="app" onclick="openPage('messagesPage')"><span class="icon">💬</span>الرسائل</button>
+<button class="app" onclick="openPage('browserPage')"><span class="icon">🌐</span>المتصفح</button>
+<button class="app" onclick="openPage('playPage')"><span class="icon">▶️</span>Google Play</button>
+<button class="app" onclick="openPage('settingsPage')"><span class="icon">⚙️</span>الإعدادات</button>
+</div>
+</div>
+
+<div class="page" id="phonePage"><h2>📞 الهاتف</h2><p>123-456-789</p><button class="back" onclick="goHome()">الرئيسية</button></div>
+<div class="page" id="messagesPage"><h2>💬 الرسائل</h2><p>لا توجد رسائل جديدة</p><button class="back" onclick="goHome()">الرئيسية</button></div>
+
+<div class="page" id="browserPage">
+<h2>🌐 المتصفح</h2>
+<input id="urlInput" type="text" placeholder="اكتب رابط موقع..." style="width:100%;padding:14px;border:0;border-radius:20px">
+<button class="back" onclick="openUrl()">فتح الموقع</button>
+<button class="back" onclick="goHome()">الرئيسية</button>
+</div>
+
+<div class="page" id="playPage">
+<div class="play-header">
+<div class="play-logo">▶ Google Play</div>
+<input id="searchInput" class="search" placeholder="🔍 البحث عن التطبيقات" oninput="searchApps()">
+</div>
+<div class="store" id="store">
+
+<div class="store-item" data-name="youtube يوتيوب">
+<div class="store-icon">▶️</div><div class="store-info"><strong>YouTube</strong><small>Google LLC</small></div>
+<button class="download" onclick="openPlay('https://play.google.com/store/apps/details?id=com.google.android.youtube')">تنزيل</button>
+</div>
+
+<div class="store-item" data-name="whatsapp واتساب">
+<div class="store-icon">💬</div><div class="store-info"><strong>WhatsApp</strong><small>WhatsApp LLC</small></div>
+<button class="download" onclick="openPlay('https://play.google.com/store/apps/details?id=com.whatsapp')">تنزيل</button>
+</div>
+
+<div class="store-item" data-name="maps خرائط جوجل">
+<div class="store-icon">🗺️</div><div class="store-info"><strong>Google Maps</strong><small>Google LLC</small></div>
+<button class="download" onclick="openPlay('https://play.google.com/store/apps/details?id=com.google.android.apps.maps')">تنزيل</button>
+</div>
+
+<div class="store-item" data-name="telegram تيليجرام">
+<div class="store-icon">✈️</div><div class="store-info"><strong>Telegram</strong><small>Telegram</small></div>
+<button class="download" onclick="openPlay('https://play.google.com/store/apps/details?id=org.telegram.messenger')">تنزيل</button>
+</div>
+
+<div class="store-item" data-name="instagram انستغرام">
+<div class="store-icon">📷</div><div class="store-info"><strong>Instagram</strong><small>Instagram</small></div>
+<button class="download" onclick="openPlay('https://play.google.com/store/apps/details?id=com.instagram.android')">تنزيل</button>
+</div>
+
+</div>
+<div class="note">زر «تنزيل» يفتح صفحة التطبيق الرسمية في Google Play. الموقع لا يثبت تطبيقات Android داخل المتصفح.</div>
+<button class="back" onclick="goHome()">الرئيسية</button>
+</div>
+
+<div class="page" id="settingsPage"><h2>⚙️ الإعدادات</h2><p>إعدادات الهاتف الافتراضي</p><button class="back" onclick="goHome()">الرئيسية</button></div>
+<button class="home-button" onclick="goHome()" aria-label="Home"></button>
+</div></div>
+
+<script>
+function openPage(id){document.getElementById("home").style.display="none";document.querySelectorAll(".page").forEach(p=>p.style.display="none");document.getElementById(id).style.display="block"}
+function goHome(){document.querySelectorAll(".page").forEach(p=>p.style.display="none");document.getElementById("home").style.display="block"}
+function openPlay(url){window.open(url,"_blank","noopener,noreferrer")}
+function searchApps(){const q=document.getElementById("searchInput").value.toLowerCase().trim();document.querySelectorAll(".store-item").forEach(a=>a.style.display=a.dataset.name.includes(q)?"flex":"none")}
+function openUrl(){let u=document.getElementById("urlInput").value.trim();if(!u)return;if(!/^https?:\/\//i.test(u))u="https://"+u;window.open(u,"_blank","noopener,noreferrer")}
+function updateTime(){const d=new Date();document.getElementById("time").textContent=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
+updateTime();setInterval(updateTime,1000);
+</script>
+</body>
+</html>

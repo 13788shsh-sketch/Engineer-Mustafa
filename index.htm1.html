@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>نظام إدارة الأعمال Pro</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f3f6fa;color:#17202a}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#17283a,#31536d)}
+.login-card{width:min(95%,520px);background:#fff;border-radius:28px;padding:35px;box-shadow:0 25px 70px #0005}
+.login-card h1{text-align:center;margin:0 0 8px;font-size:32px}.muted{color:#718096}.center{text-align:center}
+.field{margin:12px 0}.field label{display:block;margin-bottom:6px;font-weight:bold}.field input,.field select,.field textarea{width:100%;padding:13px;border:1px solid #d8dee6;border-radius:12px;background:#fff}.field textarea{min-height:90px;resize:vertical}
+.primary{background:#2379a8;color:#fff;padding:12px 18px;border-radius:11px}.secondary{background:#e8eef3;color:#223;padding:12px 18px;border-radius:11px}.danger{background:#c74435;color:#fff;padding:10px 15px;border-radius:10px}.success{background:#258b62;color:#fff;padding:10px 15px;border-radius:10px}
+.login .primary{width:100%;margin-top:12px;font-size:18px}.error{color:#c0392b;min-height:24px;text-align:center;margin-top:10px}
+#app{display:none;min-height:100vh}.top{height:70px;background:#172b3d;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:20}.brand{font-size:22px;font-weight:bold}.user-area{display:flex;gap:10px;align-items:center}.logout{background:#c74435;color:#fff;padding:10px 15px;border-radius:10px}
+.layout{display:flex;min-height:calc(100vh - 70px)}.side{width:245px;background:#20384d;color:#dfe9f1;padding:18px;flex-shrink:0}.side button{display:block;width:100%;text-align:right;background:transparent;color:#dfe9f1;padding:13px 14px;border-radius:10px;margin:4px 0}.side button.active,.side button:hover{background:#2e5875}.main{flex:1;padding:24px;min-width:0}.section{display:none}.section.active{display:block}.title{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px;flex-wrap:wrap}.title h2{margin:0}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}.stat{background:#fff;border-radius:17px;padding:20px;box-shadow:0 3px 14px #172b3d12}.stat .label{color:#718096}.stat .value{font-size:31px;font-weight:bold;margin-top:7px;color:#287eaa}
+.panel{background:#fff;border-radius:17px;padding:20px;box-shadow:0 3px 14px #172b3d10;margin-bottom:18px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:700px}th,td{padding:12px;border-bottom:1px solid #edf0f3;text-align:right}th{background:#f7f9fb}.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:13px;background:#e8eef3}.badge.green{background:#dff4e9;color:#18744e}.badge.red{background:#fde4e1;color:#a32f25}.badge.orange{background:#fff0d7;color:#966000}
+.search{padding:11px 13px;border:1px solid #d8dee6;border-radius:10px;width:250px;max-width:100%}
+.modal{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.show{display:flex}.modal-box{background:#fff;border-radius:20px;width:min(96%,650px);max-height:90vh;overflow:auto;padding:24px}.modal-head{display:flex;justify-content:space-between;align-items:center}.close{background:#edf1f4;border-radius:50%;width:38px;height:38px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}
+.empty{text-align:center;padding:35px;color:#718096}
+.toast{position:fixed;left:20px;bottom:20px;background:#172b3d;color:white;padding:13px 18px;border-radius:10px;display:none;z-index:100}.toast.show{display:block}
+@media(max-width:900px){.cards{grid-template-columns:1fr 1fr}.side{width:200px}}
+@media(max-width:650px){.top{height:auto;min-height:65px;padding:12px;}.brand{font-size:17px}.layout{display:block}.side{width:100%;display:flex;overflow:auto;gap:5px;padding:8px}.side button{min-width:max-content;text-align:center;margin:0}.main{padding:13px}.cards{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.full{grid-column:auto}.search{width:100%}}
+</style>
+</head>
+<body>
+
+<div class="login" id="login">
+  <div class="login-card">
+    <h1>نظام إدارة الأعمال Pro</h1>
+    <p class="center muted">منصة متكاملة لإدارة العملاء والمبيعات والموظفين وخدمة العملاء</p>
+    <form onsubmit="return loginUser()">
+      <div class="field"><label>اسم المستخدم</label><input id="loginUser" required autocomplete="username" placeholder="مثال: mh"></div>
+      <div class="field"><label>رمز الدخول</label><input id="loginPass" type="password" required autocomplete="current-password" placeholder="••••"></div>
+      <button class="primary" type="submit">دخول إلى النظام</button>
+      <div class="error" id="loginError"></div>
+    </form>
+  </div>
+</div>
+
+<div id="app">
+<header class="top"><div class="brand">نظام إدارة الأعمال Pro</div><div class="user-area"><span id="currentUser"></span><button class="logout" onclick="logout()">خروج</button></div></header>
+<div class="layout">
+<aside class="side">
+<button class="active" data-sec="dashboard" onclick="showSection('dashboard',this)">🏠 لوحة التحكم</button>
+<button data-sec="customers" onclick="showSection('customers',this)">👥 العملاء</button>
+<button data-sec="service" onclick="showSection('service',this)">🎧 خدمة العملاء</button>
+<button data-sec="sales" onclick="showSection('sales',this)">💰 المبيعات</button>
+<button data-sec="employees" onclick="showSection('employees',this)">🧑‍💼 الموظفون</button>
+<button data-sec="reports" onclick="showSection('reports',this)">📊 التقارير</button>
+</aside>
+
+<main class="main">
+<section id="dashboard" class="section active">
+<div class="title"><div><h2>لوحة التحكم</h2><p class="muted">ملخص مباشر لنشاط النظام</p></div></div>
+<div class="cards">
+<div class="stat"><div class="label">العملاء</div><div class="value" id="sCustomers">0</div></div>
+<div class="stat"><div class="label">طلبات الخدمة</div><div class="value" id="sService">0</div></div>
+<div class="stat"><div class="label">المبيعات</div><div class="value" id="sSales">0</div></div>
+<div class="stat"><div class="label">الموظفون</div><div class="value" id="sEmployees">0</div></div>
+</div>
+<div class="panel"><h3>آخر النشاطات</h3><div id="recent"></div></div>
+</section>
+
+<section id="customers" class="section">
+<div class="title"><div><h2>إدارة العملاء</h2><p class="muted">إضافة وتعديل وحذف والبحث عن العملاء</p></div><div class="actions"><input class="search" id="customerSearch" oninput="renderCustomers()" placeholder="بحث بالاسم أو الهاتف"><button class="primary" onclick="openCustomer()">+ إضافة عميل</button></div></div>
+<div class="panel"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>الشركة</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="customersBody"></tbody></table></div></div>
+</section>
+
+<section id="service" class="section">
+<div class="title"><div><h2>خدمة العملاء</h2><p class="muted">تسجيل ومتابعة طلبات العملاء</p></div><div class="actions"><input class="search" id="serviceSearch" oninput="renderService()" placeholder="بحث في الطلبات"><button class="primary" onclick="openService()">+ طلب جديد</button></div></div>
+<div class="panel"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>الموضوع</th><th>الأولوية</th><th>الحالة</th><th>التاريخ</th><th>إجراءات</th></tr></thead><tbody id="serviceBody"></tbody></table></div></div>
+</section>
+
+<section id="sales" class="section">
+<div class="title"><div><h2>المبيعات</h2><p class="muted">تسجيل ومتابعة عمليات البيع</p></div><div class="actions"><input class="search" id="salesSearch" oninput="renderSales()" placeholder="بحث"><button class="primary" onclick="openSale()">+ عملية بيع</button></div></div>
+<div class="cards"><div class="stat"><div class="label">إجمالي المبيعات</div><div class="value" id="totalSales">0</div></div><div class="stat"><div class="label">عدد العمليات</div><div class="value" id="salesCount">0</div></div></div>
+<div class="panel"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>المنتج</th><th>المبلغ</th><th>طريقة الدفع</th><th>التاريخ</th><th>إجراءات</th></tr></thead><tbody id="salesBody"></tbody></table></div></div>
+</section>
+
+<section id="employees" class="section">
+<div class="title"><div><h2>إدارة الموظفين</h2><p class="muted">بيانات الموظفين والوظائف</p></div><button class="primary" onclick="openEmployee()">+ إضافة موظف</button></div>
+<div class="panel"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>الوظيفة</th><th>الهاتف</th><th>القسم</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="employeesBody"></tbody></table></div></div>
+</section>
+
+<section id="reports" class="section">
+<div class="title"><div><h2>التقارير</h2><p class="muted">ملخصات قابلة للطباعة والتصدير</p></div><div class="actions"><button class="secondary" onclick="window.print()">🖨 طباعة</button><button class="success" onclick="exportAll()">⬇ تصدير البيانات</button></div></div>
+<div class="cards"><div class="stat"><div class="label">قيمة المبيعات</div><div class="value" id="rSales">0</div></div><div class="stat"><div class="label">العملاء</div><div class="value" id="rCustomers">0</div></div><div class="stat"><div class="label">طلبات مفتوحة</div><div class="value" id="rOpen">0</div></div><div class="stat"><div class="label">الموظفون</div><div class="value" id="rEmployees">0</div></div></div>
+<div class="panel"><h3>حالة طلبات خدمة العملاء</h3><div id="reportService"></div></div>
+</section>
+</main></div></div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2 id="modalTitle"></h2><button class="close" onclick="closeModal()">×</button></div><div id="modalContent"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const USERS={mh:"2002",mm:"1010",mp:"2020",nn:"5050"};
+const KEY="business_pro_v1";
+let db=loadDB(), editing=null, editingType=null;
+
+function loadDB(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x)return x}catch(e){}return{customers:[],service:[],sales:[],employees:[]}}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function today(){return new Date().toLocaleDateString("ar-IQ")}
+function toast(t){let x=document.getElementById("toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),2200)}
+
+function loginUser(){let u=document.getElementById("loginUser").value.trim(),p=document.getElementById("loginPass").value;if(USERS[u]===p){document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";document.getElementById("currentUser").textContent="المستخدم: "+u;renderAll()}else document.getElementById("loginError").textContent="اسم المستخدم أو رمز الدخول غير صحيح";return false}
+function logout(){document.getElementById("app").style.display="none";document.getElementById("login").style.display="flex";document.getElementById("loginPass").value=""}
+function showSection(s,btn){document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));document.getElementById(s).classList.add("active");document.querySelectorAll(".side button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active")}
+
+function openModal(title,content){document.getElementById("modalTitle").textContent=title;document.getElementById("modalContent").innerHTML=content;document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show");editing=null;editingType=null}
+
+function openCustomer(item=null){editing=item?.id||null;editingType="customer";openModal(item?"تعديل عميل":"إضافة عميل",`
+<div class="grid2">
+<div class="field"><label>اسم العميل *</label><input id="f_name" value="${esc(item?.name)}"></div>
+<div class="field"><label>رقم الهاتف *</label><input id="f_phone" value="${esc(item?.phone)}"></div>
+<div class="field"><label>البريد الإلكتروني</label><input id="f_email" value="${esc(item?.email)}"></div>
+<div class="field"><label>الشركة</label><input id="f_company" value="${esc(item?.company)}"></div>
+<div class="field"><label>الحالة</label><select id="f_status"><option>نشط</option><option>غير نشط</option></select></div>
+<div class="field full"><label>ملاحظات</label><textarea id="f_notes">${esc(item?.notes)}</textarea></div>
+</div><button class="primary" onclick="saveCustomer()">حفظ البيانات</button>`);if(item)document.getElementById("f_status").value=item.status}
+function saveCustomer(){let name=f("f_name"),phone=f("f_phone");if(!name||!phone)return toast("أدخل اسم العميل ورقم الهاتف");let o={id:editing||id(),name,phone,email:f("f_email"),company:f("f_company"),status:f("f_status"),notes:f("f_notes"),date:today()};if(editing)db.customers=db.customers.map(x=>x.id===editing?o:x);else db.customers.unshift(o);closeModal();save();toast("تم حفظ العميل")}
+function renderCustomers(){let q=f("customerSearch").toLowerCase(),a=db.customers.filter(x=>(x.name+x.phone+x.company).toLowerCase().includes(q));document.getElementById("customersBody").innerHTML=a.length?a.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.phone)}</td><td>${esc(x.email)}</td><td>${esc(x.company)}</td><td><span class="badge ${x.status==="نشط"?"green":"red"}">${esc(x.status)}</span></td><td><button class="secondary" onclick='openCustomer(${JSON.stringify(x)})'>تعديل</button> <button class="danger" onclick="del('customers','${x.id}')">حذف</button></td></tr>`).join(""):`<tr><td colspan="6" class="empty">لا توجد بيانات</td></tr>`}
+
+function customerOptions(){return db.customers.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join("")}
+function openService(item=null){editing=item?.id||null;editingType="service";openModal(item?"تعديل طلب":"طلب خدمة جديد",`
+<div class="grid2"><div class="field"><label>العميل</label><select id="f_customer"><option value="">اختر العميل</option>${customerOptions()}</select></div>
+<div class="field"><label>الموضوع *</label><input id="f_subject" value="${esc(item?.subject)}"></div>
+<div class="field"><label>الأولوية</label><select id="f_priority"><option>منخفضة</option><option>متوسطة</option><option>عالية</option></select></div>
+<div class="field"><label>الحالة</label><select id="f_sstatus"><option>مفتوح</option><option>قيد المعالجة</option><option>مغلق</option></select></div>
+<div class="field full"><label>التفاصيل</label><textarea id="f_details">${esc(item?.details)}</textarea></div></div><button class="primary" onclick="saveService()">حفظ الطلب</button>`);if(item){fEl("f_customer").value=item.customer;fEl("f_priority").value=item.priority;fEl("f_sstatus").value=item.status}}
+function saveService(){let subject=f("f_subject");if(!subject)return toast("أدخل موضوع الطلب");let o={id:editing||id(),customer:f("f_customer"),subject,priority:f("f_priority"),status:f("f_sstatus"),details:f("f_details"),date:today()};if(editing)db.service=db.service.map(x=>x.id===editing?o:x);else db.service.unshift(o);closeModal();save();toast("تم حفظ طلب الخدمة")}
+function renderService(){let q=f("serviceSearch").toLowerCase(),a=db.service.filter(x=>(x.customer+x.subject+x.status).toLowerCase().includes(q));document.getElementById("serviceBody").innerHTML=a.length?a.map(x=>`<tr><td>${esc(x.customer||"-")}</td><td>${esc(x.subject)}</td><td><span class="badge ${x.priority==="عالية"?"red":x.priority==="متوسطة"?"orange":"green"}">${esc(x.priority)}</span></td><td>${esc(x.status)}</td><td>${esc(x.date)}</td><td><button class="secondary" onclick='openService(${JSON.stringify(x)})'>تعديل</button> <button class="danger" onclick="del('service','${x.id}')">حذف</button></td></tr>`).join(""):`<tr><td colspan="6" class="empty">لا توجد طلبات</td></tr>`}
+
+function openSale(item=null){editing=item?.id||null;editingType="sale";openModal(item?"تعديل عملية بيع":"تسجيل عملية بيع",`
+<div class="grid2"><div class="field"><label>العميل</label><select id="f_saleCustomer"><option value="">اختر العميل</option>${customerOptions()}</select></div>
+<div class="field"><label>المنتج / الخدمة *</label><input id="f_product" value="${esc(item?.product)}"></div>
+<div class="field"><label>المبلغ *</label><input id="f_amount" type="number" min="0" value="${esc(item?.amount)}"></div>
+<div class="field"><label>طريقة الدفع</label><select id="f_payment"><option>نقدي</option><option>بطاقة</option><option>تحويل</option><option>آجل</option></select></div></div><button class="primary" onclick="saveSale()">حفظ العملية</button>`);if(item){fEl("f_saleCustomer").value=item.customer;fEl("f_payment").value=item.payment}}
+function saveSale(){let product=f("f_product"),amount=Number(f("f_amount"));if(!product||!amount)return toast("أدخل المنتج والمبلغ");let o={id:editing||id(),customer:f("f_saleCustomer"),product,amount,payment:f("f_payment"),date:today()};if(editing)db.sales=db.sales.map(x=>x.id===editing?o:x);else db.sales.unshift(o);closeModal();save();toast("تم حفظ عملية البيع")}
+function renderSales(){let q=f("salesSearch").toLowerCase(),a=db.sales.filter(x=>(x.customer+x.product+x.payment).toLowerCase().includes(q));document.getElementById("salesBody").innerHTML=a.length?a.map(x=>`<tr><td>${esc(x.customer||"-")}</td><td>${esc(x.product)}</td><td>${Number(x.amount).toLocaleString()} </td><td>${esc(x.payment)}</td><td>${esc(x.date)}</td><td><button class="secondary" onclick='openSale(${JSON.stringify(x)})'>تعديل</button> <button class="danger" onclick="del('sales','${x.id}')">حذف</button></td></tr>`).join(""):`<tr><td colspan="6" class="empty">لا توجد مبيعات</td></tr>`}
+
+function openEmployee(item=null){editing=item?.id||null;editingType="employee";openModal(item?"تعديل موظف":"إضافة موظف",`
+<div class="grid2"><div class="field"><label>اسم الموظف *</label><input id="f_ename" value="${esc(item?.name)}"></div>
+<div class="field"><label>الوظيفة *</label><input id="f_job" value="${esc(item?.job)}"></div>
+<div class="field"><label>الهاتف</label><input id="f_ephone" value="${esc(item?.phone)}"></div>
+<div class="field"><label>القسم</label><input id="f_dept" value="${esc(item?.dept)}"></div>
+<div class="field"><label>الحالة</label><select id="f_estatus"><option>على رأس العمل</option><option>إجازة</option><option>غير نشط</option></select></div></div><button class="primary" onclick="saveEmployee()">حفظ الموظف</button>`);if(item)fEl("f_estatus").value=item.status}
+function saveEmployee(){let name=f("f_ename"),job=f("f_job");if(!name||!job)return toast("أدخل اسم الموظف والوظيفة");let o={id:editing||id(),name,job,phone:f("f_ephone"),dept:f("f_dept"),status:f("f_estatus"),date:today()};if(editing)db.employees=db.employees.map(x=>x.id===editing?o:x);else db.employees.unshift(o);closeModal();save();toast("تم حفظ الموظف")}
+function renderEmployees(){document.getElementById("employeesBody").innerHTML=db.employees.length?db.employees.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.job)}</td><td>${esc(x.phone)}</td><td>${esc(x.dept)}</td><td>${esc(x.status)}</td><td><button class="secondary" onclick='openEmployee(${JSON.stringify(x)})'>تعديل</button> <button class="danger" onclick="del('employees','${x.id}')">حذف</button></td></tr>`).join(""):`<tr><td colspan="6" class="empty">لا يوجد موظفون</td></tr>`}
+
+function del(type,i){if(confirm("هل تريد حذف هذا السجل؟")){db[type]=db[type].filter(x=>x.id!==i);save();toast("تم الحذف")}}
+function f(id){return document.getElementById(id)?.value?.trim()||""}function fEl(id){return document.getElementById(id)}
+function renderAll(){renderCustomers();renderService();renderSales();renderEmployees();document.getElementById("sCustomers").textContent=db.customers.length;document.getElementById("sService").textContent=db.service.length;document.getElementById("sSales").textContent=db.sales.length;document.getElementById("sEmployees").textContent=db.employees.length;let total=db.sales.reduce((s,x)=>s+Number(x.amount||0),0);document.getElementById("totalSales").textContent=total.toLocaleString();document.getElementById("salesCount").textContent=db.sales.length;document.getElementById("rSales").textContent=total.toLocaleString();document.getElementById("rCustomers").textContent=db.customers.length;document.getElementById("rOpen").textContent=db.service.filter(x=>x.status!=="مغلق").length;document.getElementById("rEmployees").textContent=db.employees.length;document.getElementById("reportService").innerHTML=["مفتوح","قيد المعالجة","مغلق"].map(s=>`<p><b>${s}:</b> ${db.service.filter(x=>x.status===s).length}</p>`).join("");document.getElementById("recent").innerHTML=[...db.sales.map(x=>`عملية بيع: ${esc(x.product)}`),...db.service.map(x=>`طلب خدمة: ${esc(x.subject)}`)].slice(0,8).map(x=>`<p>• ${x}</p>`).join("")||'<div class="empty">لا توجد نشاطات بعد</div>'}
+function exportAll(){let blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="business-data.json";a.click();URL.revokeObjectURL(a.href);toast("تم تصدير البيانات")}
+</script>
+</body>
+</html>

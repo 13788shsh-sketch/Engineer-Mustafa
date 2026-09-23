@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>نظام إدارة الأعمال</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Tahoma,sans-serif;background:#f1f5f9;color:#172033}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.box{width:100%;max-width:400px;background:#fff;padding:30px;border-radius:20px;box-shadow:0 10px 35px #0002}
+h1{text-align:center;color:#173b75}.box p{text-align:center;color:#777}
+input,select,textarea{width:100%;padding:13px;margin:7px 0;border:1px solid #ccd3df;border-radius:10px;font-size:16px}
+button{border:0;border-radius:10px;padding:12px 16px;cursor:pointer;font-weight:bold}
+.primary{width:100%;background:#1769e0;color:#fff}.error{color:#d32f2f;text-align:center;min-height:24px}
+#app{display:none}.head{background:#172b4d;color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.head h2{margin:0 0 5px}.logout,.del{background:#d32f2f;color:#fff}
+nav{background:#fff;padding:12px;display:flex;flex-wrap:wrap;gap:8px;box-shadow:0 2px 8px #0001}nav button{background:#edf2f7}
+.wrap{max-width:1100px;margin:auto;padding:18px}.page{display:none}.page.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}.card{background:#fff;padding:20px;border-radius:14px;box-shadow:0 3px 12px #0001;margin-bottom:15px}.stat{font-size:30px;font-weight:bold;color:#1769e0;margin-top:8px}
+table{width:100%;border-collapse:collapse;min-width:600px}th,td{padding:10px;border-bottom:1px solid #eee;text-align:right}th{background:#f5f7fa}.table{overflow-x:auto}.add{background:#1769e0;color:#fff}
+@media(max-width:600px){.head{display:block}.logout{width:100%;margin-top:10px}nav button{flex:1 1 45%}}
+</style>
+</head>
+<body>
+<div id="login">
+<div class="box">
+<h1>نظام إدارة الأعمال</h1><p>تسجيل الدخول</p>
+<form id="loginForm">
+<input id="username" placeholder="اسم المستخدم" autocomplete="username" required>
+<input id="password" type="password" placeholder="رمز الدخول" autocomplete="current-password" required>
+<button class="primary" type="submit">دخول</button>
+</form>
+<div id="error" class="error"></div>
+</div></div>
+
+<div id="app">
+<div class="head"><div><h2>لوحة إدارة الأعمال</h2><span id="welcome"></span></div><button class="logout" id="logout">تسجيل خروج</button></div>
+<nav>
+<button onclick="page('dashboard')">الرئيسية</button><button onclick="page('customers')">العملاء</button><button onclick="page('service')">خدمة العملاء</button><button onclick="page('sales')">المبيعات</button><button onclick="page('employees')">الموظفون</button><button onclick="page('reports')">التقارير</button>
+</nav>
+<div class="wrap">
+<section id="dashboard" class="page active"><h1>الرئيسية</h1><div class="cards">
+<div class="card">العملاء<div id="cc" class="stat">0</div></div>
+<div class="card">طلبات الخدمة<div id="sc" class="stat">0</div></div>
+<div class="card">المبيعات<div id="xc" class="stat">0</div></div>
+<div class="card">إجمالي المبيعات<div id="total" class="stat">0</div></div>
+</div></section>
+
+<section id="customers" class="page"><h1>العملاء</h1><div class="card">
+<input id="cn" placeholder="اسم العميل"><input id="cp" placeholder="رقم الهاتف"><input id="ce" placeholder="البريد الإلكتروني"><button class="add" onclick="addCustomer()">إضافة عميل</button>
+</div><div class="card table"><table><thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>إجراء</th></tr></thead><tbody id="ct"></tbody></table></div></section>
+
+<section id="service" class="page"><h1>خدمة العملاء</h1><div class="card">
+<input id="sn" placeholder="اسم العميل"><textarea id="sd" placeholder="تفاصيل الطلب"></textarea><select id="sp"><option>عادي</option><option>مهم</option><option>عاجل</option></select><button class="add" onclick="addService()">إضافة طلب</button>
+</div><div class="card table"><table><thead><tr><th>العميل</th><th>الطلب</th><th>الأولوية</th><th>إجراء</th></tr></thead><tbody id="st"></tbody></table></div></section>
+
+<section id="sales" class="page"><h1>المبيعات</h1><div class="card">
+<input id="xn" placeholder="اسم العميل"><input id="xp" placeholder="المنتج أو الخدمة"><input id="xa" type="number" placeholder="المبلغ"><select id="xm"><option>نقدي</option><option>بطاقة</option><option>تحويل</option></select><button class="add" onclick="addSale()">إضافة مبيعة</button>
+</div><div class="card table"><table><thead><tr><th>العميل</th><th>المنتج</th><th>المبلغ</th><th>الدفع</th><th>إجراء</th></tr></thead><tbody id="xt"></tbody></table></div></section>
+
+<section id="employees" class="page"><h1>الموظفون</h1><div class="card">
+<input id="en" placeholder="اسم الموظف"><input id="ej" placeholder="الوظيفة"><input id="ep" placeholder="الهاتف"><button class="add" onclick="addEmployee()">إضافة موظف</button>
+</div><div class="card table"><table><thead><tr><th>الاسم</th><th>الوظيفة</th><th>الهاتف</th><th>إجراء</th></tr></thead><tbody id="et"></tbody></table></div></section>
+
+<section id="reports" class="page"><h1>التقارير</h1><div class="cards">
+<div class="card">العملاء: <b id="rc">0</b></div><div class="card">الخدمة: <b id="rs">0</b></div><div class="card">المبيعات: <b id="rx">0</b></div><div class="card">الإجمالي: <b id="rt">0</b></div>
+</div></section>
+</div></div>
+
+<script>
+const USERS={mh:"2002",mm:"1010",mp:"2020",nn:"5050"};
+let db={customers:[],services:[],sales:[],employees:[]};
+const KEY="business_fixed_login_v1";
+function load(){try{const x=localStorage.getItem(KEY);if(x)db=Object.assign(db,JSON.parse(x))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+document.getElementById("loginForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ const u=document.getElementById("username").value.trim(),p=document.getElementById("password").value;
+ if(USERS[u]===p){
+  document.getElementById("login").style.display="none";
+  document.getElementById("app").style.display="block";
+  document.getElementById("welcome").textContent="مرحبًا "+u;
+  render();
+ }else document.getElementById("error").textContent="اسم المستخدم أو رمز الدخول غير صحيح";
+});
+document.getElementById("logout").onclick=function(){document.getElementById("app").style.display="none";document.getElementById("login").style.display="flex";document.getElementById("password").value="";document.getElementById("error").textContent=""};
+function page(id){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");render()}
+function addCustomer(){let n=cn.value.trim();if(!n)return alert("أدخل اسم العميل");db.customers.push({name:n,phone:cp.value.trim(),email:ce.value.trim()});cn.value=cp.value=ce.value="";save();render()}
+function addService(){let n=sn.value.trim(),d=sd.value.trim();if(!n||!d)return alert("أدخل بيانات الطلب");db.services.push({name:n,details:d,priority:sp.value});sn.value=sd.value="";save();render()}
+function addSale(){let n=xn.value.trim(),p=xp.value.trim(),a=Number(xa.value);if(!n||!p||!a)return alert("أدخل بيانات المبيعة");db.sales.push({name:n,product:p,amount:a,payment:xm.value});xn.value=xp.value=xa.value="";save();render()}
+function addEmployee(){let n=en.value.trim();if(!n)return alert("أدخل اسم الموظف");db.employees.push({name:n,job:ej.value.trim(),phone:ep.value.trim()});en.value=ej.value=ep.value="";save();render()}
+function del(t,i){db[t].splice(i,1);save();render()}
+function render(){
+ cc.textContent=db.customers.length;sc.textContent=db.services.length;xc.textContent=db.sales.length;
+ let sum=db.sales.reduce((a,x)=>a+Number(x.amount||0),0);total.textContent=sum.toLocaleString();
+ ct.innerHTML=db.customers.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.phone)}</td><td>${esc(x.email)}</td><td><button class="del" onclick="del('customers',${i})">حذف</button></td></tr>`).join("");
+ st.innerHTML=db.services.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.details)}</td><td>${esc(x.priority)}</td><td><button class="del" onclick="del('services',${i})">حذف</button></td></tr>`).join("");
+ xt.innerHTML=db.sales.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.product)}</td><td>${Number(x.amount).toLocaleString()}</td><td>${esc(x.payment)}</td><td><button class="del" onclick="del('sales',${i})">حذف</button></td></tr>`).join("");
+ et.innerHTML=db.employees.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.job)}</td><td>${esc(x.phone)}</td><td><button class="del" onclick="del('employees',${i})">حذف</button></td></tr>`).join("");
+ rc.textContent=db.customers.length;rs.textContent=db.services.length;rx.textContent=db.sales.length;rt.textContent=sum.toLocaleString();
+}
+load();render();
+</script>
+</body></html>
